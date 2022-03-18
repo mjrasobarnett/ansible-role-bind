@@ -142,7 +142,13 @@ zone "{{ bind_zone.name }}" IN {
 {% elif _type == 'forward' %}
   type forward;
   forward only;
+{% endif %}
+{% if bind_zone.forwarders is defined %}
+{% if bind_zone.forwarders | length %}
   forwarders { {{ bind_zone.forwarders|join('; ') }}; };
+{% else %}
+  forwarders { };
+{% endif %}
 {% endif %}
 };
 {% endif %}
