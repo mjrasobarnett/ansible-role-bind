@@ -52,11 +52,12 @@ $TTL {{ _zone_data['ttl'] }}
 {% else %}
 @ IN SOA {{ ansible_hostname }}.{{ _zone_data['domain'] }}. {{ _zone_data['rname'] }}. (
 {% endif %}
-  {{ _zone['serial'] }}
-  {{ _zone_data['refresh'] }}
-  {{ _zone_data['retry'] }}
-  {{ _zone_data['expire'] }}
-  {{ _zone_data['minimum'] }} )
+         {{ "%-12s" | format(_zone['serial']) }} ; serial
+         {{ "%-12s" | format(_zone_data['refresh']) }} ; refresh
+         {{ "%-12s" | format(_zone_data['retry']) }} ; retry
+         {{ "%-12s" | format(_zone_data['expire']) }} ; expire
+         {{ "%-12s" | format(_zone_data['minimum']) }} ; minimum
+         )
 
 {% if _zone_data['mname']|length > 0 %}
 {% for ns in _zone_data['mname'] %}
