@@ -94,6 +94,65 @@ logging {
   category "{{ log.name }}" { "{{ log.name }}"; };
 {% endfor %}
 {% endif %}
+
+  /* For a description of what all this means and what is
+   * possible you should read the current BIND documentation.
+   * You probably will want to adjust your logging. What follows
+   * is just a starter suggestion.
+   */
+
+  /* If, as is common, you wish to send log messages to syslog,
+   * we suggest dedicating a syslog "facility", here local7, to
+   * the nameserver, with syslog configured to log *all* local7
+   * messages, irrespective of severity, and then assert fine
+   * grain control here.
+   * For example, /etc/syslog.conf might contain -
+   *    local7.info /var/adm/messages
+   */
+
+  // Specify logging channels and their filtering levels -
+
+  channel syslog_critical { // critical or worse
+    syslog local6;
+    severity critical;
+    print-category yes;   // print category name
+    print-severity yes;   // print severity level
+  };
+
+  channel syslog_error {    // errors or worse
+    syslog local6;
+    severity error;
+    print-category yes;   // print category name
+    print-severity yes;   // print severity level
+  };
+
+  channel syslog_warning {  // warning or worse
+    syslog local6;
+    severity warning;
+    print-category yes;   // print category name
+    print-severity yes;   // print severity level
+  };
+
+  channel syslog_info {   // info or worse
+    syslog local6;
+    severity info;
+    print-category yes;   // print category name
+    print-severity yes;   // print severity level
+  };
+
+  // Specify which categories of message go to which channels -
+
+  category general { syslog_error; }; // Msgs uncategorised as yet by BIND
+  category default { syslog_error; }; // Msg categories unspecified below
+
+  category config { syslog_warning; };  // Config file processing
+
+  // The volume of "update denied" messages provoked by
+  // mis-configured NT systems on the net can be overwhelming.
+  // You can suppress them using
+  //
+  // category update-security { syslog_critical; };
+
 };
 
 {% for file in bind_default_zone_files %}
