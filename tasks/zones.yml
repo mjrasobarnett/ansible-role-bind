@@ -53,7 +53,7 @@
   tags: bind
 
 - name: Read reverse ipv6 zone hashes
-  shell: "grep -s \"^; Hash:\" {{ bind_zone_dir }}/{{ (item.1 | ipaddr('revdns'))[-(9+(item.1|regex_replace('^.*/','')|int)//2):-1] }} || true"
+  shell: "grep -s \"^; Hash:\" {{ bind_zone_dir }}/db.{{ (item.1 | ipaddr('revdns'))[-(9+(item.1|regex_replace('^.*/','')|int)//2):-1] }} || true"
   changed_when: false
   check_mode: false
   register: reverse_hashes_ipv6_temp
