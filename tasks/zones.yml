@@ -5,7 +5,7 @@
   tags: bind
 
 - name: Read forward zone hashes
-  shell: 'grep -s "^; Hash:" {{ bind_zone_dir }}/{{ item.name }} || true'
+  shell: 'grep -s "^; Hash:" {{ bind_zone_dir }}/db.{{ item.name }} || true'
   changed_when: false
   check_mode: false
   register: forward_hashes_temp
@@ -27,7 +27,7 @@
   tags: bind
 
 - name: Read reverse ipv4 zone hashes
-  shell: "grep -s \"^; Hash:\" {{ bind_zone_dir }}/{{ ('.'.join(item.1.replace(item.1+'.','').split('.')[::-1])) }}.in-addr.arpa || true"
+  shell: "grep -s \"^; Hash:\" {{ bind_zone_dir }}/db.{{ ('.'.join(item.1.replace(item.1+'.','').split('.')[::-1])) }}.in-addr.arpa || true"
   changed_when: false
   check_mode: false
   register: reverse_hashes_temp
@@ -81,7 +81,7 @@
 - name: Create forward lookup zone file
   template:
     src: bind_zone.j2
-    dest: "{{ bind_zone_dir }}/{{ item.name }}"
+    dest: "{{ bind_zone_dir }}/db.{{ item.name }}"
     owner: "{{ bind_owner }}"
     group: "{{ bind_group }}"
     mode: "{{ bind_zone_file_mode }}"
@@ -103,7 +103,7 @@
 - name: Create reverse lookup zone file
   template:
     src: reverse_zone.j2
-    dest: "{{ bind_zone_dir }}/{{ ('.'.join(item.1.replace(item.1+'.','').split('.')[::-1])) }}.in-addr.arpa"
+    dest: "{{ bind_zone_dir }}/db.{{ ('.'.join(item.1.replace(item.1+'.','').split('.')[::-1])) }}.in-addr.arpa"
     owner: "{{ bind_owner }}"
     group: "{{ bind_group }}"
     mode: "{{ bind_zone_file_mode }}"
@@ -128,7 +128,7 @@
 - name: Create reverse IPv6 lookup zone file
   template:
     src: reverse_zone_ipv6.j2
-    dest: "{{ bind_zone_dir }}/{{ (item.1 | ipaddr('revdns'))[-(9+(item.1|regex_replace('^.*/','')|int)//2):-1] }}"
+    dest: "{{ bind_zone_dir }}/db.{{ (item.1 | ipaddr('revdns'))[-(9+(item.1|regex_replace('^.*/','')|int)//2):-1] }}"
     owner: "{{ bind_owner }}"
     group: "{{ bind_group }}"
     mode: "{{ bind_zone_file_mode }}"
